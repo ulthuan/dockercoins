@@ -33,11 +33,18 @@ jobs:
           master=$( kubectl get node | grep master | awk '{ print $1 }' )
           kubectl taint node $master node-role.kubernetes.io/master:NoSchedule-
 
-          project=$(basename $GITHUB_REPOSITORY)
-          compose=etc/$mode
-
-          kubectl apply -R -f $compose/
+          kubectl apply -R -f etc/$mode/
           
+          for ds in rng
+            do
+              while true
+                do
+                  sleep 10
+                  kubectl get ds
+                  kubectl get ds | grep "$ds.*\([0-9]\)/\1" && break
+                done
+            done
+            
           for deploy in hasher redis webui worker
             do
               while true
