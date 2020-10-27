@@ -32,7 +32,13 @@ jobs:
           echo "source <(kubectl completion bash)" >> ~/.bashrc
           master=$( kubectl get node | grep master | awk '{ print $1 }' )
           kubectl taint node $master node-role.kubernetes.io/master:NoSchedule-
-
+          
+          for image in hasher rng webui worker
+            do
+              docker build -t openshiftacademiaonline/dockercoins-dev:latest-$image --no-cache $image/
+            done
+          docker image ls | grep dockercoins              
+          
           kubectl apply -R -f etc/$mode/
           
           for deploy in hasher redis webui worker
