@@ -45,6 +45,16 @@ jobs:
                 done
             done
             
+          for ds in rng
+            do
+              while true
+                do
+                  sleep 10
+                  kubectl get ds
+                  kubectl get ds | grep "$ds.*1.*1.*1" && break
+                done
+            done
+            
           while true
             do
               sleep 10
