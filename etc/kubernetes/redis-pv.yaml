@@ -10,5 +10,4 @@ spec:
   hostPath:
     path: /data
   storageClassName: manual
-  type: DirectoryOrCreate
   
