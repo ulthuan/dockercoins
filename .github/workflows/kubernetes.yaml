@@ -51,7 +51,7 @@ jobs:
                 do
                   sleep 10
                   kubectl get ds
-                  kubectl get ds | grep "$ds.*1.*1.*1" && break
+                  kubectl get ds | grep "$ds.*1.*1.*1.*1.*1" && break
                 done
             done
             
