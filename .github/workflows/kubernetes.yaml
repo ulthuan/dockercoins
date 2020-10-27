@@ -38,7 +38,7 @@ jobs:
 
           kubectl apply -R -f $compose/
           
-          for deploy in hasher redis rng webui worker
+          for deploy in hasher redis webui worker
             do
               while true
                 do
