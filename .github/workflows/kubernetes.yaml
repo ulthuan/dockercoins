@@ -37,10 +37,13 @@ jobs:
           compose=etc/$mode
 
           kubectl apply -R -f $compose/
-
-          while true
+          
+          for deploy in hasher redis rng webui worker
             do
-              sleep 10
-              kubectl get deploy
-              kubectl get deploy | grep '\([0-9]\)/\1' && break
+              while true
+                do
+                  sleep 10
+                  kubectl get deploy
+                  kubectl get deploy | grep "$deploy.*\([0-9]\)/\1" && break
+                done
             done
