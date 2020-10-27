@@ -35,16 +35,6 @@ jobs:
 
           kubectl apply -R -f etc/$mode/
           
-          for ds in rng
-            do
-              while true
-                do
-                  sleep 10
-                  kubectl get ds
-                  kubectl get ds | grep "$ds.*\([0-9]\)/\1" && break
-                done
-            done
-            
           for deploy in hasher redis webui worker
             do
               while true
@@ -54,3 +44,11 @@ jobs:
                   kubectl get deploy | grep "$deploy.*\([0-9]\)/\1" && break
                 done
             done
+            
+          while true
+            do
+              sleep 10
+              curl localhost:30000 | grep "index.html" && break
+            done
+            
+              
