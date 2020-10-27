@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hasher
+spec:
+  selector:
+    matchLabels:
+      app: hasher
+  template:
+    metadata:
+      labels:
+        app: hasher
+    spec:
+      containers:
+        -
+          image: openshiftacademiaonline/dockercoins-dev:latest-hasher
+          name: ruby
+          ports: 
+            -
+              containerPort: 8080
+      

@@ -11,18 +11,97 @@ jobs:
         name: checkout
         uses: actions/checkout@v2
       -
-        name: build and test
+        name: worker
         run: |
-          docker build -t dockercoins:test --no-cache worker/
-          docker run dockercoins:test
+          set -x
+          docker build -t test --no-cache worker/
+          docker network create test
+          docker run --network test --name redis-svc -d redis
+          docker run --network test --name test -d test
           while true
             do
-              sleep 1
-              docker ps | grep Up && break
-            done
+              sleep 10
+              docker exec test ps | grep python && break
+            done   
+          docker rm -f test
+          docker rm -f redis-svc
+          docker network rm test
+      -
+        name: rng
+        run: |
+          set -x
+          docker build -t test --no-cache rng/
+          docker network create test
+          docker run --network test --name test -d test
           while true
             do
-              sleep 1
-              docker ps | grep python && break
+              sleep 10
+              docker exec test ps | grep python && break
+            done   
+          while true
+            do
+              sleep 10
+              docker exec test netstat -putana | grep 8080 && break
+            done   
+          docker rm -f test
+          docker run --network test --name test -d -p 80:8080 test
+          while true
+            do
+              sleep 10
+              curl localhost -I | grep 200 && break
             done
-            
+          docker rm -f test
+          docker network rm test
+      -
+        name: hasher
+        run: |
+          set -x
+          docker build -t test --no-cache hasher/
+          docker network create test
+          docker run --network test --name test -d test
+          while true
+            do
+              sleep 10
+              docker exec test ps | grep ruby && break
+            done   
+          while true
+            do
+              sleep 10
+              docker exec test netstat -putana | grep 8080 && break
+            done   
+          docker rm -f test
+          docker run --network test --name test -d -p 80:8080 test
+          while true
+            do
+              sleep 10
+              curl localhost -I | grep 200 && break
+            done
+          docker rm -f test
+          docker network rm test
+      -
+        name: webui
+        run: |
+          set -x
+          docker build -t test --no-cache webui/
+          docker network create test
+          docker run --network test --name redis-svc -d redis          
+          docker run --network test --name test -d test
+          while true
+            do
+              sleep 10
+              docker exec test ps | grep node && break
+            done   
+          while true
+            do
+              sleep 10
+              docker ps | grep node.*8080.*test && break
+            done   
+          docker rm -f test
+          docker run --network test --name test -d -p 80:8080 test
+          while true
+            do
+              sleep 10
+              curl localhost -I | grep -E '200|302' && break
+            done
+          docker rm -f test redis-svc
+          docker network rm test
