@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata: 
+  name: rng
+spec:
+  selector: 
+    matchLabels:
+      app: rng
+  template:
+    metadata:
+      labels:
+        app: rng
+    spec:
+      containers:
+        -
+          image: openshiftacademiaonline/dockercoins-dev:latest-rng
+          name: python
+          ports: 
+            -
+              containerPort: 8080
